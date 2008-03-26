@@ -1,16 +1,15 @@
 <?PHP
-	define('GROWL_PRIORITY_LOW', -2);
-	define('GROWL_PRIORITY_MODERATE', -1);
-	define('GROWL_PRIORITY_NORMAL', 0);
-	define('GROWL_PRIORITY_HIGH', 1);
-	define('GROWL_PRIORITY_EMERGENCY', 2);
-
 	class Growl
 	{
-		public $appName = "PHP Notify";
+		const GROWL_PRIORITY_LOW = -2;
+		const GROWL_PRIORITY_MODERATE = -1;
+		const GROWL_PRIORITY_NORMAL = 0;
+		const GROWL_PRIORITY_HIGH = 1;
+		const GROWL_PRIORITY_EMERGENCY = 2;
+
+		public $appName = 'PHP Growl';
 		public $address;
 		public $password;
-
 		public $port = 9887;
 		public $notifications = array();
 
@@ -20,7 +19,7 @@
 				$this->appName = utf8_encode($app_name);
 		}
 		
-		function setAddress($address, $password = "")
+		function setAddress($address, $password = '')
 		{
 			$this->address = $address;
 			$this->password = $password;
@@ -28,11 +27,11 @@
 		
 		function addNotification($name, $enabled = true)
 		{
-			if($name != "")
-				$this->notifications[] = array("name" => utf8_encode($name), "enabled" => $enabled);
+			if($name != '')
+				$this->notifications[] = array('name' => utf8_encode($name), 'enabled' => $enabled);
 		}
 		
-		function register($address = null, $password = "")
+		function register($address = null, $password = '')
 		{
 			if(isset($address))
 			{
@@ -40,23 +39,23 @@
 				$this->password = $password;
 			}
 			
-			$data = "";
-			$defaults = "";
+			$data = '';
+			$defaults = '';
 			$num_defaults = 0;
 			
 			for($i = 0; $i < count($this->notifications); $i++)
 			{
-				$data .= pack("n", strlen($this->notifications[$i]["name"])) . $this->notifications[$i]["name"];
-				if($this->notifications[$i]["enabled"])
+				$data .= pack('n', strlen($this->notifications[$i]['name'])) . $this->notifications[$i]['name'];
+				if($this->notifications[$i]['enabled'])
 				{
-					$defaults .= pack("c", $i);
+					$defaults .= pack('c', $i);
 					$num_defaults++;
 				}
 			}
 
 			// pack(Protocol version, type, app name, number of notifications to register)
-			$data  = pack("c2nc2", 1, 0, strlen($this->appName), count($this->notifications), $num_defaults) . $this->appName . $data . $defaults;
-			$data .= pack("H32", md5($data . $this->password));
+			$data  = pack('c2nc2', 1, 0, strlen($this->appName), count($this->notifications), $num_defaults) . $this->appName . $data . $defaults;
+			$data .= pack('H32', md5($data . $this->password));
 
 			$this->send($data);
 		}
@@ -73,26 +72,25 @@
 			if($sticky) $flags |= 1;
 
 			// pack(protocol version, type, priority/sticky flags, notification name length, title length, message length. app name length)
-			$data = pack("c2n5", 1, 1, $flags, strlen($name), strlen($title), strlen($message), strlen($this->appName));
+			$data = pack('c2n5', 1, 1, $flags, strlen($name), strlen($title), strlen($message), strlen($this->appName));
 			$data .= $name . $title . $message . $this->appName;
-			$data .= pack("H32", md5($data . $this->password));
+			$data .= pack('H32', md5($data . $this->password));
 
 			$this->send($data);
 		}
 		
 		function send($data)
 		{
-			if(function_exists("socket_create") && function_exists("socket_sendto"))
+			if(function_exists('socket_create') && function_exists('socket_sendto'))
 			{
 				$sck = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 				socket_sendto($sck, $data, strlen($data), 0x100, $this->address, $this->port);
 			}
-			elseif(function_exists("fsockopen"))
+			elseif(function_exists('fsockopen'))
 			{
-				$fp = fsockopen("udp://" . $this->address, $this->port);
+				$fp = fsockopen('udp://' . $this->address, $this->port);
 				fwrite($fp, $data);
 				fclose($fp);
 			}
 		}
 	}
-?>
