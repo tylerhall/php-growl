@@ -59,7 +59,7 @@
 
             $flags = ($priority & 7) * 2;
             if($priority < 0) $flags |= 8;
-            if($sticky) $flags |= 1;
+            if($sticky) $flags |= 256;
 
             // pack(protocol version, type, priority/sticky flags, notification name length, title length, message length. app name length)
             $data = pack('c2n5', 1, 1, $flags, strlen($name), strlen($title), strlen($message), strlen($this->appName));
