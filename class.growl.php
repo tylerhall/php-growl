@@ -76,7 +76,7 @@
 
         private function send($data)
         {
-            if(!defined('GROWL_SOCK') && function_exists('socket_create') && function_exists('socket_sendto') || GROWL_SOCK === 'socket')
+            if((!defined('GROWL_SOCK') && function_exists('socket_create') && function_exists('socket_sendto')) || (GROWL_SOCK === 'socket'))
             {
                 $sck = ( strlen(inet_pton($this->address)) > 4 && defined('AF_INET6') )
                     ? socket_create(AF_INET6, SOCK_DGRAM, SOL_UDP)
@@ -85,7 +85,7 @@
                 $this->resetConnectionData();
                 return true;
             }
-            elseif(!defined('GROWL_SOCK') && function_exists('fsockopen') || GROWL_SOCK === 'fsock')
+            elseif((!defined('GROWL_SOCK') && function_exists('fsockopen')) || (GROWL_SOCK === 'fsock'))
             {
                 $fp = fsockopen('udp://' . $this->address, $this->port);
                 fwrite($fp, $data);
