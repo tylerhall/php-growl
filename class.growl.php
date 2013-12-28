@@ -104,12 +104,14 @@
                 throw new Exception('Address Missing', 'Unable to send notification without ip address.');
             }
 
+			$this->port = $connection['port'];
             $this->address  = $connection['address'];
             $this->password = (!empty($connection['password'])) ? $connection['password'] : '';
         }
 
         private function resetConnectionData()
         {
+			$this->port = 0;
             $this->address  = null;
             $this->password = null;
         }
