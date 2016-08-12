@@ -1,0 +1,22 @@
+{
+    "name": "tylerhall/php-growl",
+    "type": "library",
+    "description": "PHP-Growl is an implementation of the Growl notification system written in PHP.",
+    "keywords": ["push", "notifications", "growl"],
+    "homepage": "https://tyler.io/php-growl/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tyler Hall",
+            "email": "rth@tyler.io",
+            "homepage": "https://tyler.io/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "autoload": {
+        "classmap": ["class.growl.php"]
+    }
+}
